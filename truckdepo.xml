@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<project name="CakeDemo" default="CakeDemo.copy.resources">
+  <property file="user.properties"/>
+  <target name="CakeDemo.copy.resources" description="Push jsps and other static content to tomcat webapps folder">
+    <!-- Copy class files. -->
+    <copy todir="${tomcat.home}/webapps/ROOT/">
+      <fileset dir="CakeDemoWeb/src/main/webapp">
+        <include name="**/*"/>
+        <exclude name="**/WEB-INF/**"/>
+        <exclude name="**/.svn/**"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="CakeDemo.deploy.webapp" description="Copy the entire CakeDemo webapp into tomcat directory">
+    <!-- Copy class files. -->
+    <copy todir="${tomcat.home}/webapps/ROOT/">
+      <fileset dir="CakeDemoWeb/target/ValuecartWeb">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+  </target>
+</project>
