@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just Tennis Season 4 - Contact List</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        h1 {
+            color: #2c5282;
+            border-bottom: 3px solid #2c5282;
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 150px;
+            position: relative;
+        }
+        .filter-group label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 4px;
+        }
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+        /* Multi-select dropdown styles */
+        .multi-select {
+            position: relative;
+            min-width: 160px;
+        }
+        .multi-select-btn {
+            padding: 8px 30px 8px 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .multi-select-btn:hover {
+            border-color: #a0aec0;
+        }
+        .multi-select-btn::after {
+            content: '▼';
+            font-size: 10px;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+        }
+        .multi-select-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 100;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .multi-select-dropdown.show {
+            display: block;
+        }
+        .multi-select-option {
+            padding: 8px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .multi-select-option:hover {
+            background-color: #f7fafc;
+        }
+        .multi-select-option input {
+            margin: 0;
+            cursor: pointer;
+        }
+        .multi-select-option label {
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0;
+            font-weight: normal;
+        }
+        .multi-select-actions {
+            display: flex;
+            border-top: 1px solid #e2e8f0;
+            padding: 5px;
+            gap: 5px;
+        }
+        .multi-select-actions button {
+            flex: 1;
+            padding: 5px 8px;
+            font-size: 12px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .select-all-btn {
+            background-color: #ebf8ff;
+            color: #2c5282;
+        }
+        .clear-btn {
+            background-color: #fff5f5;
+            color: #c53030;
+        }
+        .select-all-btn:hover {
+            background-color: #bee3f8;
+        }
+        .clear-btn:hover {
+            background-color: #fed7d7;
+        }
+        .reset-btn {
+            padding: 8px 16px;
+            background-color: #fc8181;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .reset-btn:hover {
+            background-color: #f56565;
+        }
+        .results-count {
+            padding: 8px 16px;
+            background-color: #ebf8ff;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #2c5282;
+            font-weight: bold;
+        }
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th {
+            background-color: #2c5282;
+            color: white;
+            padding: 12px 10px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        th:hover {
+            background-color: #2a4365;
+        }
+        th .sort-icon {
+            margin-left: 5px;
+            opacity: 0.5;
+        }
+        th.sorted .sort-icon {
+            opacity: 1;
+        }
+        td {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 10px;
+        }
+        tr:hover {
+            background-color: #f7fafc;
+        }
+        tr.hidden {
+            display: none;
+        }
+        a.whatsapp-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #25D366;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a.whatsapp-link:hover {
+            text-decoration: underline;
+        }
+        .level-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .level-advanced { background-color: #c6f6d5; color: #276749; }
+        .level-upper-intermediate { background-color: #bee3f8; color: #2c5282; }
+        .level-intermediate { background-color: #fefcbf; color: #975a16; }
+        .level-lower-intermediate { background-color: #fed7aa; color: #c05621; }
+        .level-improver { background-color: #e9d8fd; color: #553c9a; }
+        .level-beginner { background-color: #fed7d7; color: #c53030; }
+        .zone-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            background-color: #edf2f7;
+            color: #4a5568;
+        }
+        .yes-badge {
+            color: #276749;
+            font-weight: bold;
+        }
+        .no-badge {
+            color: #c53030;
+        }
+        @media (max-width: 768px) {
+            .filter-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>🎾 Just Tennis Season 4 - Contact List</h1>
+<p class="subtitle">January 1 - April 1, 2026 | Filter by any column to find opponents</p>
+
+<div class="controls">
+    <div class="controls-row">
+        <div class="filter-group">
+            <label>Search Name</label>
+            <input type="text" id="filterName" placeholder="Type name...">
+        </div>
+        <div class="filter-group">
+            <label>Search Area</label>
+            <input type="text" id="filterArea" placeholder="Type area...">
+        </div>
+        <div class="filter-group multi-select" id="levelFilter">
+            <label>Level</label>
+            <div class="multi-select-btn" onclick="toggleDropdown('levelFilter')">All Levels</div>
+            <div class="multi-select-dropdown">
+                <div class="multi-select-option">
+                    <input type="checkbox" id="level-advanced" value="Advanced">
+                    <label for="level-advanced">Advanced</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="level-upper" value="Upper Intermediate">
+                    <label for="level-upper">Upper Intermediate</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="level-int" value="Intermediate">
+                    <label for="level-int">Intermediate</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="level-lower" value="Lower Intermediate">
+                    <label for="level-lower">Lower Intermediate</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="level-improver" value="Improver">
+                    <label for="level-improver">Improver</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="level-beginner" value="Beginner">
+                    <label for="level-beginner">Beginner</label>
+                </div>
+                <div class="multi-select-actions">
+                    <button class="select-all-btn" onclick="selectAll('levelFilter')">All</button>
+                    <button class="clear-btn" onclick="clearAll('levelFilter')">Clear</button>
+                </div>
+            </div>
+        </div>
+        <div class="filter-group multi-select" id="zoneFilter">
+            <label>Metro Zone</label>
+            <div class="multi-select-btn" onclick="toggleDropdown('zoneFilter')">All Zones</div>
+            <div class="multi-select-dropdown">
+                <div class="multi-select-option">
+                    <input type="checkbox" id="zone-1" value="Zone 1">
+                    <label for="zone-1">Zone 1</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="zone-2" value="Zone 2">
+                    <label for="zone-2">Zone 2</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="zone-3" value="Zone 3">
+                    <label for="zone-3">Zone 3</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="zone-4" value="Zone 4">
+                    <label for="zone-4">Zone 4</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="zone-5" value="Zone 5">
+                    <label for="zone-5">Zone 5</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="zone-6" value="Zone 6">
+                    <label for="zone-6">Zone 6</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="zone-7" value="Zone 7">
+                    <label for="zone-7">Zone 7</label>
+                </div>
+                <div class="multi-select-actions">
+                    <button class="select-all-btn" onclick="selectAll('zoneFilter')">All</button>
+                    <button class="clear-btn" onclick="clearAll('zoneFilter')">Clear</button>
+                </div>
+            </div>
+        </div>
+        <div class="filter-group multi-select" id="budgetFilter">
+            <label>Max Budget</label>
+            <div class="multi-select-btn" onclick="toggleDropdown('budgetFilter')">All Budgets</div>
+            <div class="multi-select-dropdown">
+                <div class="multi-select-option">
+                    <input type="checkbox" id="budget-50" value="< 50 AED">
+                    <label for="budget-50">&lt; 50 AED</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="budget-100" value="50 - 100 AED">
+                    <label for="budget-100">50 - 100 AED</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="budget-150" value="100 - 150 AED">
+                    <label for="budget-150">100 - 150 AED</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="budget-over" value="> 150 AED">
+                    <label for="budget-over">&gt; 150 AED</label>
+                </div>
+                <div class="multi-select-actions">
+                    <button class="select-all-btn" onclick="selectAll('budgetFilter')">All</button>
+                    <button class="clear-btn" onclick="clearAll('budgetFilter')">Clear</button>
+                </div>
+            </div>
+        </div>
+        <div class="filter-group multi-select" id="freeCourtFilter">
+            <label>Free Court Access</label>
+            <div class="multi-select-btn" onclick="toggleDropdown('freeCourtFilter')">Any</div>
+            <div class="multi-select-dropdown">
+                <div class="multi-select-option">
+                    <input type="checkbox" id="court-yes" value="Yes">
+                    <label for="court-yes">Yes</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="court-no" value="No">
+                    <label for="court-no">No</label>
+                </div>
+                <div class="multi-select-actions">
+                    <button class="select-all-btn" onclick="selectAll('freeCourtFilter')">All</button>
+                    <button class="clear-btn" onclick="clearAll('freeCourtFilter')">Clear</button>
+                </div>
+            </div>
+        </div>
+        <div class="filter-group multi-select" id="daysFilter">
+            <label>Preferred Days</label>
+            <div class="multi-select-btn" onclick="toggleDropdown('daysFilter')">All Days</div>
+            <div class="multi-select-dropdown">
+                <div class="multi-select-option">
+                    <input type="checkbox" id="days-flexible" value="Flexible">
+                    <label for="days-flexible">Flexible</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="days-weekdays" value="Weekdays">
+                    <label for="days-weekdays">Weekdays</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="days-weekends" value="Weekends">
+                    <label for="days-weekends">Weekends</label>
+                </div>
+                <div class="multi-select-actions">
+                    <button class="select-all-btn" onclick="selectAll('daysFilter')">All</button>
+                    <button class="clear-btn" onclick="clearAll('daysFilter')">Clear</button>
+                </div>
+            </div>
+        </div>
+        <div class="filter-group multi-select" id="timesFilter">
+            <label>Preferred Times</label>
+            <div class="multi-select-btn" onclick="toggleDropdown('timesFilter')">All Times</div>
+            <div class="multi-select-dropdown">
+                <div class="multi-select-option">
+                    <input type="checkbox" id="times-morning" value="Morning">
+                    <label for="times-morning">Morning</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="times-afternoon" value="Afternoon">
+                    <label for="times-afternoon">Afternoon</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="times-evening" value="Evening">
+                    <label for="times-evening">Evening</label>
+                </div>
+                <div class="multi-select-option">
+                    <input type="checkbox" id="times-flexible" value="Flexible">
+                    <label for="times-flexible">Flexible</label>
+                </div>
+                <div class="multi-select-actions">
+                    <button class="select-all-btn" onclick="selectAll('timesFilter')">All</button>
+                    <button class="clear-btn" onclick="clearAll('timesFilter')">Clear</button>
+                </div>
+            </div>
+        </div>
+        <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
+        <div class="results-count"><span id="resultCount">79</span> players shown</div>
+    </div>
+</div>
+
+<div class="table-container">
+    <table id="contactTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">ID <span class="sort-icon">↕</span></th>
+                <th onclick="sortTable(1)">Name <span class="sort-icon">↕</span></th>
+                <th>WhatsApp</th>
+                <th onclick="sortTable(3)">Level <span class="sort-icon">↕</span></th>
+                <th onclick="sortTable(4)">Preferred Area/s <span class="sort-icon">↕</span></th>
+                <th onclick="sortTable(5)">Metro Zone <span class="sort-icon">↕</span></th>
+                <th onclick="sortTable(6)">Max Budget <span class="sort-icon">↕</span></th>
+                <th onclick="sortTable(7)">Free Court? <span class="sort-icon">↕</span></th>
+                <th onclick="sortTable(8)">Days <span class="sort-icon">↕</span></th>
+                <th onclick="sortTable(9)">Times <span class="sort-icon">↕</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-level="Advanced" data-zone="Zone 5" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>1</td>
+                <td>Anant Singh</td>
+                <td><a href="https://wa.me/447933904684" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Al Garhoud</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 5" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>2</td>
+                <td>Naveen Upadhyay</td>
+                <td><a href="https://wa.me/971585750191" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Deira</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 2" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekdays" data-times="Evening">
+                <td>3</td>
+                <td>Saju Alex</td>
+                <td><a href="https://wa.me/971556140303" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>IMPZ</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekdays</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>4</td>
+                <td>Salim Kamal</td>
+                <td><a href="https://wa.me/971556603547" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Al Garhoud, Al Qusais & Port Jabal Ali</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 6" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>5</td>
+                <td>Sameer Samant</td>
+                <td><a href="https://wa.me/971501582303" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Jadaf, Oud Maitha</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekends" data-times="Evening">
+                <td>6</td>
+                <td>Mouayad Ibrahim</td>
+                <td><a href="https://wa.me/971509229917" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>SHJ & near SHJ (Dubai, Ajman)</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Weekdays" data-times="Evening">
+                <td>7</td>
+                <td>Rakesh Das</td>
+                <td><a href="https://wa.me/919674632196" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Any where South Dubai</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekdays</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 3" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>8</td>
+                <td>Atul Rane</td>
+                <td><a href="https://wa.me/919987067638" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>Barsha</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Flexible">
+                <td>9</td>
+                <td>Shifan</td>
+                <td><a href="https://wa.me/971521548993" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>Anywhere</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 1" data-budget="100 - 150 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>10</td>
+                <td>Sukesh Raj Suvarna</td>
+                <td><a href="https://wa.me/971503959556" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Dubai, any area!</td>
+                <td><span class="zone-badge">Zone 1</span></td>
+                <td>100 - 150 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>11</td>
+                <td>Chirag Patel</td>
+                <td><a href="https://wa.me/971585925213" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Flexible</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>12</td>
+                <td>Uday KS</td>
+                <td><a href="https://wa.me/971542502175" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Etisalat sports club</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 3" data-budget="50 - 100 AED" data-freecourt="No" data-days="Weekdays" data-times="Morning">
+                <td>13</td>
+                <td>Lee Elliott</td>
+                <td><a href="https://wa.me/971585947782" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>JVC</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Weekdays</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Morning">
+                <td>14</td>
+                <td>Shanavas Ahmed</td>
+                <td><a href="https://wa.me/971566829970" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Any</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Improver" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>15</td>
+                <td>Shola Gbademosi</td>
+                <td><a href="https://wa.me/447477305805" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-improver">Improver</span></td>
+                <td>Al Garhoud</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 6" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>16</td>
+                <td>Mohammad Sakib</td>
+                <td><a href="https://wa.me/971507087646" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>Garhoud, Barsha, Warqa</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="No" data-days="Weekends" data-times="Morning">
+                <td>17</td>
+                <td>Martin Y. Xie</td>
+                <td><a href="https://wa.me/971559975237" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Near Sharjah</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Weekends</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 6" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>18</td>
+                <td>Amit Shinde</td>
+                <td><a href="https://wa.me/971585922747" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Oud Metha or Al Barsha</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 1" data-budget="100 - 150 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>19</td>
+                <td>Shayne Barretto</td>
+                <td><a href="https://wa.me/971558268879" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>No area in particular, open to all</td>
+                <td><span class="zone-badge">Zone 1</span></td>
+                <td>100 - 150 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="< 50 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>20</td>
+                <td>Vince Dio</td>
+                <td><a href="https://wa.me/971581414638" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Al Garhoud</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 4" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Afternoon">
+                <td>21</td>
+                <td>Neel Mehra</td>
+                <td><a href="https://wa.me/971505064297" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Jumeriah</td>
+                <td><span class="zone-badge">Zone 4</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Afternoon</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 3" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekends" data-times="Evening">
+                <td>22</td>
+                <td>Juliet Badaguas</td>
+                <td><a href="https://wa.me/971561406796" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Mirdif</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 7" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Morning">
+                <td>23</td>
+                <td>Hassan Kumar Dangeti</td>
+                <td><a href="https://wa.me/971555648219" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Barsha, Silicon</td>
+                <td><span class="zone-badge">Zone 7</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="No" data-days="Flexible" data-times="Flexible">
+                <td>24</td>
+                <td>Mohamed Faraz Siddiqui</td>
+                <td><a href="https://wa.me/971566800461" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>Mirdif, Warqa, Twar</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 3" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Flexible" data-times="Morning">
+                <td>25</td>
+                <td>Mohinudheen Shabi Ahamed</td>
+                <td><a href="https://wa.me/971555883696" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>Nad Al Hammar</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>26</td>
+                <td>Nikhil Asnani</td>
+                <td><a href="https://wa.me/971554559240" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Oud Metha/Garhoud</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="No" data-days="Weekends" data-times="Morning">
+                <td>27</td>
+                <td>Hassan</td>
+                <td><a href="https://wa.me/971563806963" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Deira or Sharjah near Tawoon</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Weekends</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 6" data-budget="100 - 150 AED" data-freecourt="Yes" data-days="Flexible" data-times="Afternoon">
+                <td>28</td>
+                <td>Alpino Hussami</td>
+                <td><a href="https://wa.me/971501808786" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Jumeirah 1</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>100 - 150 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Afternoon</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Flexible">
+                <td>29</td>
+                <td>Sharad Thukral</td>
+                <td><a href="https://wa.me/971563247444" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>JLT & nearby</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 3" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>30</td>
+                <td>Taga</td>
+                <td><a href="https://wa.me/971554887940" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Majan</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 6" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>31</td>
+                <td>Anthony Hobeika</td>
+                <td><a href="https://wa.me/971508133520" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Meydan</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 4" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekends" data-times="Evening">
+                <td>32</td>
+                <td>Sadiq Shariff</td>
+                <td><a href="https://wa.me/971522377923" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Garhoud</td>
+                <td><span class="zone-badge">Zone 4</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 6" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>33</td>
+                <td>Faris Sohail</td>
+                <td><a href="https://wa.me/971558866460" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Garhoud, Mankhool, Jumeirah 1</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 3" data-budget="100 - 150 AED" data-freecourt="No" data-days="Weekdays" data-times="Evening">
+                <td>34</td>
+                <td>Joud Zouzou</td>
+                <td><a href="https://wa.me/971545730612" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Anywhere</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>100 - 150 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Weekdays</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 1" data-budget="< 50 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>35</td>
+                <td>Rakesh</td>
+                <td><a href="https://wa.me/971528657159" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>DIP1</td>
+                <td><span class="zone-badge">Zone 1</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>36</td>
+                <td>Mohit Sejwal</td>
+                <td><a href="https://wa.me/971585757505" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Jumeirah Golf Estate</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Morning">
+                <td>37</td>
+                <td>Archit Arya</td>
+                <td><a href="https://wa.me/971564080864" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>JVT</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="> 150 AED" data-freecourt="Yes" data-days="Weekends" data-times="Morning">
+                <td>38</td>
+                <td>Vishal Wadhwa</td>
+                <td><a href="https://wa.me/971504585619" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Dubai Marina or JA Resort, Jebel Ali</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>> 150 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="No" data-days="Weekends" data-times="Evening">
+                <td>39</td>
+                <td>Farhan Sher Dil</td>
+                <td><a href="https://wa.me/971555675300" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Jebel Ali</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Weekends</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 2" data-budget="> 150 AED" data-freecourt="Yes" data-days="Flexible" data-times="Flexible">
+                <td>40</td>
+                <td>David Machado</td>
+                <td><a href="https://wa.me/971525834199" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Dubai Hills</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>> 150 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Weekdays" data-times="Morning">
+                <td>41</td>
+                <td>Faisal Jamil</td>
+                <td><a href="https://wa.me/971506529460" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>The Lakes</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekdays</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 2" data-budget="< 50 AED" data-freecourt="No" data-days="Flexible" data-times="Flexible">
+                <td>42</td>
+                <td>Niyas</td>
+                <td><a href="https://wa.me/919746205383" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>Mirdif</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Weekends" data-times="Evening">
+                <td>43</td>
+                <td>Ryan</td>
+                <td><a href="https://wa.me/971563451192" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Discovery Garden, Expo, Barsha</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Flexible">
+                <td>44</td>
+                <td>Asim Ali</td>
+                <td><a href="https://wa.me/971501704717" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Almost anywhere</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Weekdays" data-times="Morning">
+                <td>45</td>
+                <td>Mounir El Marouri</td>
+                <td><a href="https://wa.me/971521053507" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Al Barsha South</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekdays</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Improver" data-zone="Zone 3" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>46</td>
+                <td>Rehan Siddiqui</td>
+                <td><a href="https://wa.me/971552350387" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-improver">Improver</span></td>
+                <td>Dubailand, Silicon Oasis</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Beginner" data-zone="Zone 3" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekdays" data-times="Evening">
+                <td>47</td>
+                <td>Ismail Ashfaque</td>
+                <td><a href="https://wa.me/971524507927" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-beginner">Beginner</span></td>
+                <td>Damac Hills</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekdays</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Beginner" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekdays" data-times="Evening">
+                <td>48</td>
+                <td>Jahangir Ateeq</td>
+                <td><a href="https://wa.me/971585399043" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-beginner">Beginner</span></td>
+                <td>Al Garhoud / Dubailand / DAMAC Hills</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekdays</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 6" data-budget="100 - 150 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>49</td>
+                <td>Mike Chester</td>
+                <td><a href="https://wa.me/971585871384" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Jaddaf</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>100 - 150 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 6" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Flexible">
+                <td>50</td>
+                <td>Srinivas Nishtala</td>
+                <td><a href="https://wa.me/971585744982" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>DIFC</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="> 150 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>51</td>
+                <td>Abhishek Mahendran</td>
+                <td><a href="https://wa.me/971501329333" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>JLT/Meadows/Gardens</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>> 150 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 6" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>52</td>
+                <td>Anand Prakash</td>
+                <td><a href="https://wa.me/919434001186" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>JLT and nearby</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 6" data-budget="< 50 AED" data-freecourt="No" data-days="Flexible" data-times="Morning">
+                <td>53</td>
+                <td>Kshitij Mendiratti</td>
+                <td><a href="https://wa.me/971529054151" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>India Club Oud Metha</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 5" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Morning">
+                <td>54</td>
+                <td>Omer Mohammed</td>
+                <td><a href="https://wa.me/971528954828" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>North Dubai</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 3" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Flexible">
+                <td>55</td>
+                <td>Okan</td>
+                <td><a href="https://wa.me/971589034532" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Sports City</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 1" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekends" data-times="Evening">
+                <td>56</td>
+                <td>Jaspal</td>
+                <td><a href="https://wa.me/971557655385" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>Jebel Ali Free Zone</td>
+                <td><span class="zone-badge">Zone 1</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekends" data-times="Afternoon">
+                <td>57</td>
+                <td>Ghassan Al Jamil</td>
+                <td><a href="https://wa.me/971505598891" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Garhoud</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Afternoon</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="No" data-days="Weekends" data-times="Evening">
+                <td>58</td>
+                <td>Hasan Wahbah</td>
+                <td><a href="https://wa.me/971508719780" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>JVT</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Weekends</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 5" data-budget="100 - 150 AED" data-freecourt="Yes" data-days="Flexible" data-times="Flexible">
+                <td>59</td>
+                <td>Woody Liu</td>
+                <td><a href="https://wa.me/971585976766" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Muhaisnah</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>100 - 150 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>60</td>
+                <td>Muhammad Shazad Aslam</td>
+                <td><a href="https://wa.me/971551045154" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Al Ghurair Centre Deira</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 5" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Flexible" data-times="Flexible">
+                <td>61</td>
+                <td>Zainul Habeed</td>
+                <td><a href="https://wa.me/971555830737" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Deira</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 2" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekends" data-times="Morning">
+                <td>62</td>
+                <td>Nikhil Nanda</td>
+                <td><a href="https://wa.me/971502402511" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>JVT, Ras Al Khor, Gardens</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>63</td>
+                <td>Jay Gunawardena</td>
+                <td><a href="https://wa.me/971557343016" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Garhoud</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 2" data-budget="< 50 AED" data-freecourt="No" data-days="Flexible" data-times="Flexible">
+                <td>64</td>
+                <td>Johnson Pinto</td>
+                <td><a href="https://wa.me/971585292015" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>International City</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 6" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Morning">
+                <td>65</td>
+                <td>Azam Iqbal</td>
+                <td><a href="https://wa.me/971529909812" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Anywhere</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 6" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Weekends" data-times="Morning">
+                <td>66</td>
+                <td>Mohamad Badr</td>
+                <td><a href="https://wa.me/971501910074" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Al Garhoud Area</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 3" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Morning">
+                <td>67</td>
+                <td>Lalit Ratnala</td>
+                <td><a href="https://wa.me/971504231850" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Dubai South</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 5" data-budget="50 - 100 AED" data-freecourt="No" data-days="Weekends" data-times="Evening">
+                <td>68</td>
+                <td>Hiroki Sato</td>
+                <td><a href="https://wa.me/971569090078" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Any</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Weekends</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Advanced" data-zone="Zone 3" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>69</td>
+                <td>Bathiya Karunaratne</td>
+                <td><a href="https://wa.me/971567073800" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-advanced">Advanced</span></td>
+                <td>Arabian Ranches</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Morning">
+                <td>70</td>
+                <td>Sunit Chaudhary</td>
+                <td><a href="https://wa.me/971585077215" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Dubai</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 5" data-budget="50 - 100 AED" data-freecourt="No" data-days="Weekends" data-times="Afternoon">
+                <td>71</td>
+                <td>Kevin Rocamora</td>
+                <td><a href="https://wa.me/971555677097" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Deira</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Weekends</td>
+                <td>Afternoon</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 3" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Evening">
+                <td>72</td>
+                <td>Bharath Kumar</td>
+                <td><a href="https://wa.me/971527551498" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Production City</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 6" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Morning">
+                <td>73</td>
+                <td>Otto Konig</td>
+                <td><a href="https://wa.me/971504975503" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Twar, Business Bay, Karma, Garhoud</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 3" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Flexible" data-times="Flexible">
+                <td>74</td>
+                <td>Bhuvanesh Kulhari Bhanu</td>
+                <td><a href="https://wa.me/971569386220" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>IMPZ</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Flexible</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="50 - 100 AED" data-freecourt="Yes" data-days="Flexible" data-times="Morning">
+                <td>75</td>
+                <td>Vinod Jaiswal</td>
+                <td><a href="https://wa.me/971507125073" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Furjan, Springs, Arabian Ranches</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Improver" data-zone="Zone 6" data-budget="50 - 100 AED" data-freecourt="No" data-days="Flexible" data-times="Evening">
+                <td>76</td>
+                <td>Vishy</td>
+                <td><a href="https://wa.me/971502798080" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-improver">Improver</span></td>
+                <td>Oud Metha, Business Bay, Old Dubai</td>
+                <td><span class="zone-badge">Zone 6</span></td>
+                <td>50 - 100 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Flexible</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Upper Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="Yes" data-days="Weekdays" data-times="Evening">
+                <td>77</td>
+                <td>Nabeel Mohammed</td>
+                <td><a href="https://wa.me/971509011489" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-upper-intermediate">Upper Intermediate</span></td>
+                <td>Anywhere</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekdays</td>
+                <td>Evening</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 3" data-budget="< 50 AED" data-freecourt="No" data-days="Weekends" data-times="Morning">
+                <td>78</td>
+                <td>Syed Zafar</td>
+                <td><a href="https://wa.me/971555400158" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Remram, Al Barsha, Sports City, IMPZ</td>
+                <td><span class="zone-badge">Zone 3</span></td>
+                <td>< 50 AED</td>
+                <td><span class="no-badge">No</span></td>
+                <td>Weekends</td>
+                <td>Morning</td>
+            </tr>
+            <tr data-level="Intermediate" data-zone="Zone 2" data-budget="100 - 150 AED" data-freecourt="Yes" data-days="Weekends" data-times="Evening">
+                <td>79</td>
+                <td>Raheel Haider</td>
+                <td><a href="https://wa.me/971561174567" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-intermediate">Intermediate</span></td>
+                <td>Al Nahda 1</td>
+                <td><span class="zone-badge">Zone 2</span></td>
+                <td>100 - 150 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Weekends</td>
+                <td>Evening</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Multi-select dropdown functionality
+    function toggleDropdown(filterId) {
+        const dropdown = document.querySelector(`#${filterId} .multi-select-dropdown`);
+        const allDropdowns = document.querySelectorAll('.multi-select-dropdown');
+        
+        // Close all other dropdowns
+        allDropdowns.forEach(dd => {
+            if (dd !== dropdown) dd.classList.remove('show');
+        });
+        
+        dropdown.classList.toggle('show');
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.multi-select')) {
+            document.querySelectorAll('.multi-select-dropdown').forEach(dd => {
+                dd.classList.remove('show');
+            });
+        }
+    });
+
+    // Get selected values from a multi-select
+    function getSelectedValues(filterId) {
+        const checkboxes = document.querySelectorAll(`#${filterId} input[type="checkbox"]:checked`);
+        return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    // Update button text based on selections
+    function updateButtonText(filterId, defaultText) {
+        const selected = getSelectedValues(filterId);
+        const btn = document.querySelector(`#${filterId} .multi-select-btn`);
+        
+        if (selected.length === 0) {
+            btn.textContent = defaultText;
+        } else if (selected.length === 1) {
+            btn.textContent = selected[0];
+        } else {
+            btn.textContent = `${selected.length} selected`;
+        }
+    }
+
+    // Select all options in a multi-select
+    function selectAll(filterId) {
+        document.querySelectorAll(`#${filterId} input[type="checkbox"]`).forEach(cb => {
+            cb.checked = true;
+        });
+        updateAllButtonTexts();
+        applyFilters();
+    }
+
+    // Clear all options in a multi-select
+    function clearAll(filterId) {
+        document.querySelectorAll(`#${filterId} input[type="checkbox"]`).forEach(cb => {
+            cb.checked = false;
+        });
+        updateAllButtonTexts();
+        applyFilters();
+    }
+
+    // Update all button texts
+    function updateAllButtonTexts() {
+        updateButtonText('levelFilter', 'All Levels');
+        updateButtonText('zoneFilter', 'All Zones');
+        updateButtonText('budgetFilter', 'All Budgets');
+        updateButtonText('freeCourtFilter', 'Any');
+        updateButtonText('daysFilter', 'All Days');
+        updateButtonText('timesFilter', 'All Times');
+    }
+
+    // Add change listeners to all checkboxes
+    document.querySelectorAll('.multi-select input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+            updateAllButtonTexts();
+            applyFilters();
+        });
+    });
+
+    // Text input filters
+    const textFilters = {
+        name: document.getElementById('filterName'),
+        area: document.getElementById('filterArea')
+    };
+
+    function applyFilters() {
+        const rows = document.querySelectorAll('#contactTable tbody tr');
+        let visibleCount = 0;
+
+        const nameFilter = textFilters.name.value.toLowerCase();
+        const areaFilter = textFilters.area.value.toLowerCase();
+        const levelFilter = getSelectedValues('levelFilter');
+        const zoneFilter = getSelectedValues('zoneFilter');
+        const budgetFilter = getSelectedValues('budgetFilter');
+        const freeCourtFilter = getSelectedValues('freeCourtFilter');
+        const daysFilter = getSelectedValues('daysFilter');
+        const timesFilter = getSelectedValues('timesFilter');
+
+        rows.forEach(row => {
+            const name = row.cells[1].textContent.toLowerCase();
+            const area = row.cells[4].textContent.toLowerCase();
+            const level = row.dataset.level;
+            const zone = row.dataset.zone;
+            const budget = row.dataset.budget;
+            const freeCourt = row.dataset.freecourt;
+            const days = row.dataset.days;
+            const times = row.dataset.times;
+
+            const matchName = name.includes(nameFilter);
+            const matchArea = area.includes(areaFilter);
+            const matchLevel = levelFilter.length === 0 || levelFilter.includes(level);
+            const matchZone = zoneFilter.length === 0 || zoneFilter.includes(zone);
+            const matchBudget = budgetFilter.length === 0 || budgetFilter.includes(budget);
+            const matchFreeCourt = freeCourtFilter.length === 0 || freeCourtFilter.includes(freeCourt);
+            const matchDays = daysFilter.length === 0 || daysFilter.includes(days);
+            const matchTimes = timesFilter.length === 0 || timesFilter.some(t => times.includes(t));
+
+            if (matchName && matchArea && matchLevel && matchZone && matchBudget && matchFreeCourt && matchDays && matchTimes) {
+                row.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                row.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('resultCount').textContent = visibleCount;
+    }
+
+    // Add event listeners to text filters
+    Object.values(textFilters).forEach(filter => {
+        filter.addEventListener('input', applyFilters);
+    });
+
+    function resetFilters() {
+        // Clear text inputs
+        textFilters.name.value = '';
+        textFilters.area.value = '';
+        
+        // Clear all checkboxes
+        document.querySelectorAll('.multi-select input[type="checkbox"]').forEach(cb => {
+            cb.checked = false;
+        });
+        
+        // Update button texts
+        updateAllButtonTexts();
+        
+        // Reset sort to default ID order (ascending)
+        sortDirection = {};
+        sortDirection[0] = false; // Will become true (ascending) when sortTable is called
+        
+        // Remove sorted class from all headers
+        document.querySelectorAll('th').forEach(h => h.classList.remove('sorted'));
+        
+        // Sort by ID column (index 0) ascending
+        sortTable(0);
+        
+        applyFilters();
+    }
+
+    // Sort functionality
+    let sortDirection = {};
+
+    function sortTable(columnIndex) {
+        const table = document.getElementById('contactTable');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const headers = table.querySelectorAll('th');
+
+        // Toggle sort direction
+        sortDirection[columnIndex] = !sortDirection[columnIndex];
+        const ascending = sortDirection[columnIndex];
+
+        // Remove sorted class from all headers
+        headers.forEach(h => h.classList.remove('sorted'));
+        headers[columnIndex].classList.add('sorted');
+
+        // Define sort order for levels
+        const levelOrder = {
+            'Advanced': 1,
+            'Upper Intermediate': 2,
+            'Intermediate': 3,
+            'Lower Intermediate': 4,
+            'Improver': 5,
+            'Beginner': 6
+        };
+
+        // Define sort order for budgets
+        const budgetOrder = {
+            '< 50 AED': 1,
+            '50 - 100 AED': 2,
+            '100 - 150 AED': 3,
+            '> 150 AED': 4
+        };
+
+        rows.sort((a, b) => {
+            let aVal = a.cells[columnIndex].textContent.trim();
+            let bVal = b.cells[columnIndex].textContent.trim();
+
+            // Handle ID column (numeric)
+            if (columnIndex === 0) {
+                aVal = parseInt(aVal);
+                bVal = parseInt(bVal);
+                return ascending ? aVal - bVal : bVal - aVal;
+            }
+
+            // Handle Level column
+            if (columnIndex === 3) {
+                aVal = levelOrder[a.dataset.level] || 99;
+                bVal = levelOrder[b.dataset.level] || 99;
+                return ascending ? aVal - bVal : bVal - aVal;
+            }
+
+            // Handle Zone column
+            if (columnIndex === 5) {
+                aVal = parseInt(a.dataset.zone.replace('Zone ', ''));
+                bVal = parseInt(b.dataset.zone.replace('Zone ', ''));
+                return ascending ? aVal - bVal : bVal - aVal;
+            }
+
+            // Handle Budget column
+            if (columnIndex === 6) {
+                aVal = budgetOrder[a.dataset.budget] || 99;
+                bVal = budgetOrder[b.dataset.budget] || 99;
+                return ascending ? aVal - bVal : bVal - aVal;
+            }
+
+            // Default string comparison
+            return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        });
+
+        // Re-append sorted rows
+        rows.forEach(row => tbody.appendChild(row));
+    }
+</script>
+
+</body>
+</html>
