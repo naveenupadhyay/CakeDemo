@@ -239,6 +239,7 @@
             font-size: 12px;
             font-weight: bold;
         }
+        .level-expert { background-color: #ffd700; color: #744210; }
         .level-advanced { background-color: #c6f6d5; color: #276749; }
         .level-upper-intermediate { background-color: #bee3f8; color: #2c5282; }
         .level-intermediate { background-color: #fefcbf; color: #975a16; }
@@ -286,6 +287,10 @@
             <label>Level</label>
             <div class="multi-select-btn" onclick="toggleDropdown('levelFilter')">All Levels</div>
             <div class="multi-select-dropdown">
+                <div class="multi-select-option">
+                    <input type="checkbox" id="level-expert" value="Expert">
+                    <label for="level-expert">Expert</label>
+                </div>
                 <div class="multi-select-option">
                     <input type="checkbox" id="level-advanced" value="Advanced">
                     <label for="level-advanced">Advanced</label>
@@ -1415,6 +1420,18 @@
                 <td><span class="yes-badge">Yes</span></td>
                 <td>Weekends</td>
                 <td>Evening</td>
+            </tr>
+            <tr data-level="Lower Intermediate" data-zone="Zone 5" data-budget="< 50 AED" data-freecourt="Yes" data-days="Flexible" data-times="Flexible, but prefer evening">
+                <td>80</td>
+                <td>Alexandre hahn</td>
+                <td><a href="https://wa.me/971585064811" target="_blank" class="whatsapp-link">💬 Chat</a></td>
+                <td><span class="level-badge level-lower-intermediate">Lower Intermediate</span></td>
+                <td>North</td>
+                <td><span class="zone-badge">Zone 5</span></td>
+                <td>< 50 AED</td>
+                <td><span class="yes-badge">Yes</span></td>
+                <td>Flexible</td>
+                <td>Flexible, but prefer evening</td>
             </tr>
         </tbody>
     </table>
